@@ -5,6 +5,7 @@ import { activeSceneName } from "./appState";
 import { setExcApi } from "./excalidrawApi";
 import { sceneManager } from "./managers/sceneManager";
 import { menuManager } from "./managers/menuManager";
+
 sceneManager.initSceneManager();
 (await menuManager).initMenuManager();
 
@@ -13,7 +14,10 @@ function App() {
     <main class="lokidraw">
       <Excalidraw
         excalidrawAPI={setExcApi}
-        initialData={{ appState: { name: activeSceneName } }}
+        initialData={{
+          appState: { name: activeSceneName.value },
+          source: "Lokidraw",
+        }}
       >
         <MainMenu>
           <MainMenu.DefaultItems.SaveAsImage />

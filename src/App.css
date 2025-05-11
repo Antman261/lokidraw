@@ -16,7 +16,6 @@ main {
 .lokidraw .excalidraw h1 {
   border-width:0px;
   border-radius: 0;
-  width: min-content ;
   font-weight: 600;
   font-size: 16px;
 }

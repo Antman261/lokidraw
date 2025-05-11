@@ -9,7 +9,8 @@
     "core:default",
     "opener:default",
     "fs:default",
-    "fs:allow-home-meta-recursive",
+    "fs:allow-write-text-file",
+    "fs:allow-read-text-file",
     "core:window:allow-set-title",
     "dialog:default"
   ]
