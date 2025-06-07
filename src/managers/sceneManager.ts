@@ -13,12 +13,16 @@ import {
 import { restore, serializeAsJSON } from "@excalidraw/excalidraw";
 import { getConfig } from "./configManager";
 import { DEFAULT_NAME } from "../constants";
-import { removeHomePath } from "../util/path";
+import { getDir, removeHomePath } from "../util/path";
 
 let hasInit = false;
 
+const getRecentDirectory = async () =>
+  getDir(getConfig().scene) ?? (await documentDir());
+
 const newSceneWithFilePicker = async () => {
   const path = await saveWithFilePicker(JSON.stringify(blankDrawing));
+  if (!path) return;
   await loadScene(path);
 };
 
@@ -30,8 +34,9 @@ const saveWithFilePicker = async (data?: string) => {
         extensions: ["lkd"],
       },
     ],
-    defaultPath: await documentDir(),
+    defaultPath: await getRecentDirectory(),
   });
+  if (!path) return;
   const excApi = await getExcApi();
   const sceneData =
     data ??
@@ -41,8 +46,10 @@ const saveWithFilePicker = async (data?: string) => {
       excApi?.getFiles() ?? {},
       "database"
     );
-  await saveScene(path, sceneData);
-  return path;
+  if (!sceneData || typeof sceneData !== "string") {
+    return console.error("Invalid scene data:", sceneData);
+  }
+  return await saveScene(path, sceneData);
 };
 
 const saveCurrentScene = async () => {
@@ -64,13 +71,14 @@ const saveScene = async (path: string | URL, data: string) => {
   );
   setSaved();
   activeScene.value = path.toString();
+  return path;
 };
 const loadWithFilePicker = async () => {
   await loadScene(
     await open({
       multiple: false,
       directory: false,
-      defaultPath: await documentDir(),
+      defaultPath: await getRecentDirectory(),
     })
   );
 };
@@ -89,12 +97,9 @@ const loadScene = async (path: string | URL | null) => {
     excApi?.updateScene(restoredSceneData);
     activeScene.value = path.toString();
   } catch (e) {
-    if (e instanceof Error) {
-      console.error(await removeHomePath(e.message));
-      return;
-    }
     if (!e) return;
-    console.error(await removeHomePath(e.toString()));
+    if (e instanceof Error) return console.error(e.message);
+    console.error(e.toString());
   }
 };
 

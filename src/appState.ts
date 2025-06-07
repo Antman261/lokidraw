@@ -13,7 +13,6 @@ activeScene.subscribe(async (path) => {
   const cleanPath = await removeHomePath(path);
   console.log("Setting window title:", cleanPath);
   hasUnsaved.value = false;
-
   await getCurrentWindow().setTitle(`Lokidraw: ${cleanPath}`);
 });
 

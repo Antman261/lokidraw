@@ -5,9 +5,24 @@ import { activeSceneName } from "./appState";
 import { setExcApi } from "./excalidrawApi";
 import { sceneManager } from "./managers/sceneManager";
 import { menuManager } from "./managers/menuManager";
+import { LokiMenuRoot } from "./managers/menuTypes";
 
+const toExcaliMenu = (root: LokiMenuRoot) => (
+  <>
+    {root.slice(1).map((menu) => (
+      <MainMenu.Group title={menu.text}>
+        {menu.items.map((item) => (
+          <MainMenu.Item onClick={item.action} icon={item.icon}>
+            {item.text}
+          </MainMenu.Item>
+        ))}
+      </MainMenu.Group>
+    ))}
+  </>
+);
 sceneManager.initSceneManager();
-(await menuManager).initMenuManager();
+const menu = await menuManager;
+menu.initMenuManager();
 
 function App() {
   return (
@@ -20,6 +35,7 @@ function App() {
         }}
       >
         <MainMenu>
+          {toExcaliMenu(menu.getRootMenu())}
           <MainMenu.DefaultItems.SaveAsImage />
           <MainMenu.DefaultItems.Help />
           <MainMenu.DefaultItems.ToggleTheme />
