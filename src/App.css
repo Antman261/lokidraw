@@ -1,14 +1,23 @@
 
 :root {
   overflow: hidden;
+  background: transparent;
+}
+html {
+  background: transparent;
 }
 body {
   margin: 0;
+  background: transparent;
 }
 main {
   width: 100vw;
-  height: 100vh;
+  height: calc(100vh - 18px);
+  padding-bottom: 5px;
   display: flex;
+}
+.lokidraw.dark {
+  background-color: hsl(0, 0%, 8%);
 }
 .lokidraw .excalidraw .excalidraw-button.sidenav-btn:active {
   box-shadow: 0 0 0 1px var(--color-brand-active);

@@ -4,13 +4,13 @@ import { activeSceneName } from "../appState";
 const wrapperStyle: JSX.CSSProperties = {
   position: "absolute",
   top: "1rem",
-  left: "4rem",
+  left: "7rem",
   height: "40px",
   zIndex: 800,
 };
 
 export const SceneTitle = () => (
   <div style={wrapperStyle}>
-    <h1 class="scene-title">{activeSceneName}</h1>
+    <h1 class="scene-title">{activeSceneName.value}</h1>
   </div>
 );

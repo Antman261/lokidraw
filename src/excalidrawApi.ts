@@ -1,10 +1,12 @@
-import { ExcalidrawImperativeAPI } from "@excalidraw/excalidraw/types";
-import { explodePromise } from "./util/explodePromise";
-import { restore, serializeAsJSON } from "@excalidraw/excalidraw";
+import { ExcalidrawImperativeAPI as ExcaliApi } from '@excalidraw/excalidraw/types';
+import { explodePromise } from './util/explodePromise';
+import { restore, serializeAsJSON } from '@excalidraw/excalidraw';
+import { delay } from './util/delay';
 
-const [excaliApi, resolve] = explodePromise<ExcalidrawImperativeAPI>();
+const [excaliApi, resolve] = explodePromise<ExcaliApi>();
 
-export const setExcaliApi = (ex: ExcalidrawImperativeAPI) => resolve(ex);
+export const setExcApi = async (ex: ExcaliApi) =>
+  delay(0).then(() => resolve(ex));
 export const getExcali = () => excaliApi;
 
 export const getActiveSceneData = async () => {
@@ -13,17 +15,14 @@ export const getActiveSceneData = async () => {
     exc.getSceneElements(),
     exc.getAppState(),
     exc.getFiles(),
-    "database"
+    'database'
   );
 };
 
 export const restoreScene = async (rawData: string) => {
+  const excApi = await getExcali();
   const sceneData = JSON.parse(rawData);
-  const restoredScene = restore(
-    sceneData,
-    sceneData.appState,
-    sceneData.elements
-  );
-  (await getExcali()).updateScene(restoredScene);
+  const restoredScene = restore(sceneData, excApi.getAppState(), null);
+  excApi.updateScene(restoredScene);
   console.log(sceneData.elements, restoredScene.elements);
 };

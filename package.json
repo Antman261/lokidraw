@@ -9,6 +9,13 @@
     "preview": "vite preview",
     "tauri": "tauri"
   },
+  "prettier": {
+    "lineWidth": 110,
+    "indentWidth": 2,
+    "semiColons": true,
+    "singleQuote": true,
+    "proseWrap": "never"
+  },
   "dependencies": {
     "@excalidraw/excalidraw": "^0.18.0",
     "@preact/signals": "^2.0.2",

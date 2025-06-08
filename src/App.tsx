@@ -1,11 +1,15 @@
-import { Excalidraw, MainMenu } from "@excalidraw/excalidraw";
-import "./App.css";
-import { SceneTitle } from "./components/SceneTitle";
-import { setExcaliApi } from "./excalidrawApi";
-import { LokiMenuRoot } from "./managers/menuTypes";
-import { menuManager } from "./managers/menuManager";
-import { initLokidraw } from "./init";
-import { delay } from "./util/delay";
+import { Excalidraw, MainMenu } from '@excalidraw/excalidraw';
+import './App.css';
+import { SceneTitle } from './components/SceneTitle';
+import { setExcApi } from './excalidrawApi';
+import { LokiMenuRoot } from './managers/menuTypes';
+import { menuManager } from './managers/menuManager';
+import { initLokidraw } from './init';
+import { SideNavBtn } from './components/SideNav/SideNavBtn';
+import { SideNav } from './components/SideNav/SideNav';
+import { TitleBar } from './components/TitleBar';
+import { theme } from './appState';
+import { config } from './managers';
 
 const toExcaliMenu = (root: LokiMenuRoot) => (
   <>
@@ -21,22 +25,29 @@ const toExcaliMenu = (root: LokiMenuRoot) => (
   </>
 );
 
-delay(5).then(initLokidraw);
+initLokidraw();
 function App() {
-  console.log("hello?");
   return (
-    <main class="lokidraw">
-      <Excalidraw excalidrawAPI={setExcaliApi}>
-        <MainMenu>
-          {toExcaliMenu(menuManager.getRootMenu())}
-          <MainMenu.DefaultItems.SaveAsImage />
-          <MainMenu.DefaultItems.Help />
-          <MainMenu.DefaultItems.ToggleTheme />
-          <MainMenu.DefaultItems.ChangeCanvasBackground />
-        </MainMenu>
-        <SceneTitle />
-      </Excalidraw>
-    </main>
+    <>
+      <TitleBar />
+      <main class={`lokidraw ${theme}`}>
+        <SideNav />
+        <Excalidraw
+          excalidrawAPI={setExcApi}
+          initialData={{ elements: [], appState: { theme: config.theme } }}
+        >
+          <SideNavBtn />
+          <MainMenu>
+            {toExcaliMenu(menuManager.getRootMenu())}
+            <MainMenu.DefaultItems.SaveAsImage />
+            <MainMenu.DefaultItems.Help />
+            <MainMenu.DefaultItems.ToggleTheme />
+            <MainMenu.DefaultItems.ChangeCanvasBackground />
+          </MainMenu>
+          <SceneTitle />
+        </Excalidraw>
+      </main>
+    </>
   );
 }
 

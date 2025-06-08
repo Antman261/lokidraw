@@ -1,0 +1,13 @@
+.top-nav {
+    height: 20px;
+    cursor: grab;
+    margin-bottom: -5px;
+}
+
+.top-nav:active{
+    cursor: grabbing;
+}
+
+.top-nav.dark {
+    background-color: hsl(0, 0%, 7%);
+}

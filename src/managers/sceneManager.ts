@@ -72,8 +72,6 @@ export const sceneManager = {
   initSceneManager: async () => {
     if (hasInit) return;
     hasInit = true;
-    activeScene.subscribe(loadScene);
-    (await getExcali()).onChange(setHasUnsaved);
     // _autosaveInterval = setInterval(saveCurrentScene, 30000);
   },
   saveCurrentScene,

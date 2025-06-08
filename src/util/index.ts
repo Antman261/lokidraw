@@ -1,6 +1,6 @@
 export * from "./call";
 export * from "./Func";
-export * from "./classAttr";
+export * from "./HtmlClass";
 export * from "./explodePromise";
 export * from "./isDefined";
 export * from "./isTruthy";

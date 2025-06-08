@@ -1,0 +1,76 @@
+.sidenav.closed {
+    left: -260px;
+    width: 0;
+}
+
+.sidenav {
+    height: 100%;
+    z-index: 1;
+    transition: 0.5s;
+    border-right: 1px solid rgb(240, 239, 255);
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+.sidenav.dark {
+    background-color: hsl(0, 0%, 8%);
+    border-right-color:hsl(0, 0%, 9%);
+    color: #f1f1f1;
+}
+.sidenav.dark .nav-item {
+    color: hsl(0, 0%, 60%);
+}
+
+
+.sidenav.open {
+    padding: 10px;
+    width: 250px;
+    left: 0;
+}
+
+.sidenav .nav-item {
+    padding: 15px;
+    border-radius: 3%;
+    height: 2em;
+    text-decoration: none;
+    font-size: 1em;
+    color: #818181;
+    display: flex;
+    flex-direction: column;
+    transition: 0.3s;
+    flex: 0 0 auto;
+
+}
+
+.sidenav .nav-item .time {
+    color: #818181;
+    font-size: 0.8em;
+}
+
+/* Change color on hover */
+.lokidraw .excalidraw .sidenav a:hover {
+    color: #f1f1f1;
+}
+
+/* Active link styling */
+.sidenav .nav-item.active .time {
+    color: hsl(105, 5%, 90%);
+}
+
+.sidenav .nav-item.active {
+    background-color: var(--color-primary);
+    /* background-color: purple; */
+    color: hsl(0, 0%, 96%);
+}
+
+.lokidraw .excalidraw .App-menu_top>*:first-child {
+    margin-left: calc(var(--lg-button-size) + .5rem)
+}
+
+.lokidraw .excalidraw .excalidraw-button.sidenav-btn {
+    border-width: 0; 
+}
+.lokidraw .excalidraw .excalidraw-button.sidenav-btn.dark {
+color: #818181;
+}
+
