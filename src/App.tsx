@@ -1,11 +1,11 @@
 import { Excalidraw, MainMenu } from "@excalidraw/excalidraw";
 import "./App.css";
 import { SceneTitle } from "./components/SceneTitle";
-import { activeSceneName } from "./appState";
-import { setExcApi } from "./excalidrawApi";
-import { sceneManager } from "./managers/sceneManager";
-import { menuManager } from "./managers/menuManager";
+import { setExcaliApi } from "./excalidrawApi";
 import { LokiMenuRoot } from "./managers/menuTypes";
+import { menuManager } from "./managers/menuManager";
+import { initLokidraw } from "./init";
+import { delay } from "./util/delay";
 
 const toExcaliMenu = (root: LokiMenuRoot) => (
   <>
@@ -20,22 +20,15 @@ const toExcaliMenu = (root: LokiMenuRoot) => (
     ))}
   </>
 );
-sceneManager.initSceneManager();
-const menu = await menuManager;
-menu.initMenuManager();
 
+delay(5).then(initLokidraw);
 function App() {
+  console.log("hello?");
   return (
     <main class="lokidraw">
-      <Excalidraw
-        excalidrawAPI={setExcApi}
-        initialData={{
-          appState: { name: activeSceneName.value },
-          source: "Lokidraw",
-        }}
-      >
+      <Excalidraw excalidrawAPI={setExcaliApi}>
         <MainMenu>
-          {toExcaliMenu(menu.getRootMenu())}
+          {toExcaliMenu(menuManager.getRootMenu())}
           <MainMenu.DefaultItems.SaveAsImage />
           <MainMenu.DefaultItems.Help />
           <MainMenu.DefaultItems.ToggleTheme />

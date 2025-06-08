@@ -1,24 +1,37 @@
-import { activeScene } from "../appState";
+import { effect } from "@preact/signals";
+import { activeScene, recentScenes } from "../appState";
 import { DEFAULT_NAME } from "../constants";
 
-type Config = { scene: string; version: 1 };
-
-const configKey = "lokidrawConfig";
-const store = window.localStorage;
 const version = 1;
-
-const defaultConfig = (): Config => ({ scene: DEFAULT_NAME, version });
-const saveConfig = (cfg: Omit<Config, "version">) =>
-  store.setItem(configKey, JSON.stringify({ ...cfg, version }));
-
-activeScene.subscribe((scene) => {
-  if (scene === DEFAULT_NAME) return;
-  saveConfig({ scene: scene.toString() });
-});
-
-export const getConfig = (): Readonly<Config> => {
-  const config =
-    JSON.parse(store.getItem(configKey) ?? "null") ?? defaultConfig();
-  if (config?.version !== 1) return defaultConfig();
-  return config!;
+type Config = {
+  scene: string;
+  recentScenes: string[];
+  version: typeof version;
 };
+
+const key = "lokidrawConfig";
+const store = window.localStorage;
+
+export const config = (() => {
+  let config: Config;
+  let hasInit = false;
+  const _default = { scene: DEFAULT_NAME, recentScenes: [], version };
+  config = JSON.parse(store.getItem(key) ?? "null") ?? _default;
+  if (config.version !== version) console.warn("Config version mismatch");
+  return {
+    init: () => {
+      if (hasInit) return;
+      hasInit = true;
+      effect(() => {
+        config = {
+          scene: activeScene.value,
+          recentScenes: [...recentScenes.value],
+          version,
+        };
+        store.setItem(key, JSON.stringify(config));
+      });
+    },
+    recentScenes: config.recentScenes,
+    scene: config.scene,
+  };
+})();

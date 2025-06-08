@@ -2,127 +2,83 @@ import { documentDir } from "@tauri-apps/api/path";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { writeTextFile, readTextFile } from "@tauri-apps/plugin-fs";
 import blankDrawing from "../assets/blankDrawing.json";
-import { getExcApi } from "../excalidrawApi";
+import { getActiveSceneData, getExcali, restoreScene } from "../excalidrawApi";
 import {
   activeScene,
+  activeSceneFolder,
   isUntitledScene,
   isUpToDate,
   setHasUnsaved,
   setSaved,
 } from "../appState";
-import { restore, serializeAsJSON } from "@excalidraw/excalidraw";
-import { getConfig } from "./configManager";
+import { setSource } from "../util/setSource";
 import { DEFAULT_NAME } from "../constants";
-import { getDir, removeHomePath } from "../util/path";
 
 let hasInit = false;
+let _autosaveInterval;
 
-const getRecentDirectory = async () =>
-  getDir(getConfig().scene) ?? (await documentDir());
+const getSceneFolder = async () =>
+  activeSceneFolder.value ?? (await documentDir());
 
-const newSceneWithFilePicker = async () => {
-  const path = await saveWithFilePicker(JSON.stringify(blankDrawing));
-  if (!path) return;
-  await loadScene(path);
-};
+const newSceneFile = () => saveWithFilePicker(JSON.stringify(blankDrawing));
 
 const saveWithFilePicker = async (data?: string) => {
   const path = await save({
-    filters: [
-      {
-        name: "Lokidrawings",
-        extensions: ["lkd"],
-      },
-    ],
-    defaultPath: await getRecentDirectory(),
+    filters: [{ name: "Lokidrawings", extensions: ["lkd"] }],
+    defaultPath: await getSceneFolder(),
   });
   if (!path) return;
-  const excApi = await getExcApi();
-  const sceneData =
-    data ??
-    serializeAsJSON(
-      excApi?.getSceneElements() ?? [],
-      excApi?.getAppState(),
-      excApi?.getFiles() ?? {},
-      "database"
-    );
-  if (!sceneData || typeof sceneData !== "string") {
-    return console.error("Invalid scene data:", sceneData);
-  }
+  const sceneData = data ?? (await getActiveSceneData());
+  if (!sceneData) console.error("Invalid scene data:", sceneData);
   return await saveScene(path, sceneData);
 };
 
 const saveCurrentScene = async () => {
-  if (!hasInit) return;
-  if (isUntitledScene() || isUpToDate()) return;
-  const excApi = await getExcApi();
-  const sceneData = serializeAsJSON(
-    excApi?.getSceneElements() ?? [],
-    excApi?.getAppState(),
-    excApi?.getFiles() ?? {},
-    "database"
-  );
-  await saveScene(activeScene.value, sceneData);
-};
-const saveScene = async (path: string | URL, data: string) => {
-  await writeTextFile(
-    path,
-    data.replace('"source": "http://localhost:1420"', '"source": "Lokidraw"')
-  );
-  setSaved();
-  activeScene.value = path.toString();
-  return path;
-};
-const loadWithFilePicker = async () => {
-  await loadScene(
-    await open({
-      multiple: false,
-      directory: false,
-      defaultPath: await getRecentDirectory(),
-    })
-  );
-};
-const loadScene = async (path: string | URL | null) => {
-  if (path == null) return;
-  try {
-    console.log("loading", await removeHomePath(path));
-    const sceneData = JSON.parse(await readTextFile(path));
-    console.log(sceneData);
-    const excApi = await getExcApi();
-    const restoredSceneData = restore(
-      sceneData,
-      excApi?.getAppState(),
-      excApi?.getSceneElements()
-    );
-    excApi?.updateScene(restoredSceneData);
-    activeScene.value = path.toString();
-  } catch (e) {
-    if (!e) return;
-    if (e instanceof Error) return console.error(e.message);
-    console.error(e.toString());
-  }
+  if (!hasInit || isUntitledScene() || isUpToDate()) return;
+  await saveScene(activeScene.value, await getActiveSceneData());
 };
 
-const initSceneManager = async () => {
-  if (hasInit) return;
-  const prevScenePath = getConfig().scene;
-  console.log("setting activeScene", await removeHomePath(prevScenePath));
-  if ((await removeHomePath(prevScenePath)) !== DEFAULT_NAME) {
-    await loadScene(prevScenePath);
-  }
-  const excApi = await getExcApi();
-  excApi?.onChange(() => {
-    console.log("drawing changed");
-    setHasUnsaved();
+const saveScene = async (path: string, data: string) => {
+  await writeTextFile(path, setSource(data, "Lokidraw"));
+  setSaved();
+  activeScene.value = path;
+};
+
+const loadWithFilePicker = async () => {
+  const path = await open({
+    multiple: false,
+    directory: false,
+    defaultPath: await getSceneFolder(),
   });
-  setInterval(saveCurrentScene, 30000);
-  hasInit = true;
+  if (path) activeScene.value = path;
+};
+
+const loadScene = async (path: string | null) => {
+  if (path == null || path === DEFAULT_NAME) return;
+  console.log("Loading scene", path);
+  try {
+    await restoreScene(await readTextFile(path));
+    console.log("Loaded");
+    setSaved();
+    console.log("setSaved after loaded");
+  } catch (e) {
+    // TODO: setup app's error boundary
+    if (e instanceof Error) return console.error(e);
+    if (e) return console.error(e.toString());
+  }
 };
 
 export const sceneManager = {
-  initSceneManager,
+  initSceneManager: async () => {
+    if (hasInit) return;
+    hasInit = true;
+    activeScene.subscribe(loadScene);
+    (await getExcali()).onChange(setHasUnsaved);
+    // _autosaveInterval = setInterval(saveCurrentScene, 30000);
+  },
   saveCurrentScene,
   saveWithFilePicker,
   loadSceneWithFilePicker: loadWithFilePicker,
-  newSceneWithFilePicker,
+  loadSceneFromFile: loadScene,
+  newSceneWithFilePicker: newSceneFile,
 };

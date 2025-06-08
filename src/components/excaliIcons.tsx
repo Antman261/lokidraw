@@ -8,11 +8,6 @@
  */
 import { JSX } from "preact/jsx-runtime";
 
-export const iconFillColor = () => "var(--icon-fill-color)";
-
-// const handlerColor = (theme: Theme) =>
-//   theme === THEME.LIGHT ? "#f1f1f1" : "#1e1e1e";
-
 type Opts = {
   width?: number;
   height?: number;

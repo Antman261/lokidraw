@@ -5,6 +5,4 @@ globalThis.EXCALIDRAW_EXPORT_SOURCE = "Lokidraw";
 import { render } from "preact";
 import App from "./App";
 
-console.log(window);
-
 render(<App />, document.getElementById("root")!);
