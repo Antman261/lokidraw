@@ -16,7 +16,11 @@ const toExcaliMenu = (root: LokiMenuRoot) => (
     {root.slice(1).map((menu) => (
       <MainMenu.Group title={menu.text}>
         {menu.items.map((item) => (
-          <MainMenu.Item onClick={item.action} icon={item.icon}>
+          <MainMenu.Item
+            onClick={item.action}
+            icon={item.icon}
+            shortcut={item.shortcut}
+          >
             {item.text}
           </MainMenu.Item>
         ))}

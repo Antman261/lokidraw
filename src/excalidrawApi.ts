@@ -24,5 +24,5 @@ export const restoreScene = async (rawData: string) => {
   const sceneData = JSON.parse(rawData);
   const restoredScene = restore(sceneData, excApi.getAppState(), null);
   excApi.updateScene(restoredScene);
-  console.log(sceneData.elements, restoredScene.elements);
+  // console.log(sceneData.elements, restoredScene.elements);
 };

@@ -13,7 +13,7 @@
     "windows": [
       {
         "title": "Lokidraw",
-        "backgroundColor": "fff",
+        "backgroundColor": "000",
         "titleBarStyle": "Overlay",
         "width": 1200,
         "height": 800

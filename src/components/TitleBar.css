@@ -1,7 +1,8 @@
 .top-nav {
-    height: 20px;
+    height: 30px;
     cursor: grab;
     margin-bottom: -5px;
+    background-color: hsl(0, 0%, 90%)
 }
 
 .top-nav:active{
@@ -9,5 +10,6 @@
 }
 
 .top-nav.dark {
-    background-color: hsl(0, 0%, 7%);
+    background-color: hsl(0, 0%, 11%);
+    color: #fff;
 }

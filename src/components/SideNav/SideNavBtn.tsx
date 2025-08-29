@@ -1,4 +1,3 @@
-import SidebarIcon from '../../assets/sidebarIcon.svg';
 import { JSX } from 'preact';
 import { isNavOpen, theme, toggleSideNav } from '../../appState';
 import { createIcon } from '../excaliIcons';
