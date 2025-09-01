@@ -9,7 +9,9 @@ export const keyManager = new (class KeyManager {
     this.#combos = {};
 
     window.addEventListener('keydown', (ev) => {
-      const keyCombo = this.#combos[toKeyString(ev)];
+      const keyString = toKeyString(ev);
+      const keyCombo = this.#combos[keyString];
+      console.log('Pressed:', keyString);
       if (!keyCombo) return;
       ev.preventDefault();
       [...keyCombo].forEach(callArg);

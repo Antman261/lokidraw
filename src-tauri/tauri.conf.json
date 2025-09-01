@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "Lokidraw",
-  "version": "0.1.0",
-  "identifier": "com.lokidraw.app",
+  "version": "0.2.0",
+  "identifier": "com.Lokidraw.app",
   "build": {
     "beforeDevCommand": "deno task dev",
     "devUrl": "http://localhost:1420",
